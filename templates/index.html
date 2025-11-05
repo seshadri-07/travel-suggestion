@@ -1,31 +1,399 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AI Student Travel Planner</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Student Travel Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 50px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #999;
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        .input-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-icon {
+            font-size: 24px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .find-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .find-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .find-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .recommendation-section {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        .recommendation-section.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .rec-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .rec-header h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .rec-item {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .rec-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rec-value {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .input-section {
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <header><h1>🎒 AI Student Travel Planner</h1></header>
-  <section class="card">
-    <label>Budget per person (₹)</label>
-    <input id="budget" type="number" value="200">
-    <label>Days</label>
-    <input id="days" type="number" value="2">
-    <button id="btn">Find Best Destination</button>
-    <p id="status"></p>
-  </section>
-  <section id="result" class="card hidden">
-    <h2>Best Recommendation</h2>
-    <p><b>Location:</b> <span id="r_loc"></span></p>
-    <p><b>Estimated Cost:</b> ₹<span id="r_cost"></span></p>
-    <p><b>Rating:</b> <span id="r_rate"></span></p>
-    <p><b>Popularity:</b> <span id="r_pop"></span></p>
-    <p><b>Score:</b> <span id="r_score"></span></p>
-  </section>
-</div>
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+    <div class="container">
+        <div class="header">
+            <div class="icon">🎒</div>
+            <h1>AI Student Travel Planner</h1>
+            <p class="subtitle">Smart Travel Recommendations for Smart Students</p>
+            <p class="tagline">Discover amazing destinations within your budget!</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="budget">💰 Budget per Person (₹)</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">₹</span>
+                    <input type="number" id="budget" placeholder="Enter your budget" value="200" min="0">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="days">📅 Number of Days</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🗓️</span>
+                    <input type="number" id="days" placeholder="How many days?" value="2" min="1">
+                </div>
+            </div>
+
+            <button class="find-btn" onclick="findDestination()">
+                ✨ Find Best Destination
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: 600;">Finding your perfect destination...</p>
+        </div>
+
+        <div class="recommendation-section" id="recommendation">
+            <div class="rec-header">
+                <h2>🎉 Best Recommendation</h2>
+            </div>
+
+            <div class="rec-item">
+                <div class="rec-label">📍 Location</div>
+                <div class="rec-value" id="location">-</div>
+            </div>
+
+            <div class="rec-item">
+                <div class="rec-label">💵 Estimated Cost</div>
+                <div class="rec-value" id="cost">₹ -</div>
+            </div>
+
+            <div class="rec-item">
+                <div class="rec-label">⭐ Rating</div>
+                <div class="rec-value" id="rating">-</div>
+            </div>
+
+            <div class="rec-item">
+                <div class="rec-label">🔥 Popularity</div>
+                <div class="rec-value" id="popularity">-</div>
+            </div>
+
+            <div class="rec-item">
+                <div class="rec-label">🎯 Score</div>
+                <div class="rec-value" id="score">-</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-text">AI-Powered</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💸</div>
+                <div class="feature-text">Budget Friendly</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-text">Instant Results</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function findDestination() {
+            const budget = document.getElementById('budget').value;
+            const days = document.getElementById('days').value;
+
+            if (!budget || !days || budget <= 0 || days <= 0) {
+                alert('Please enter valid budget and days!');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('recommendation').classList.remove('active');
+
+            // Simulate API call
+            setTimeout(() => {
+                // Hide loading
+                document.getElementById('loading').classList.remove('active');
+                
+                // Show recommendation with sample data
+                document.getElementById('recommendation').classList.add('active');
+                
+                // Sample data - replace with actual API response
+                document.getElementById('location').textContent = 'Sample Location';
+                document.getElementById('cost').textContent = `₹ ${budget * days}`;
+                document.getElementById('rating').textContent = '4.5/5';
+                document.getElementById('popularity').textContent = 'High';
+                document.getElementById('score').textContent = '85/100';
+                
+                // Scroll to recommendation
+                document.getElementById('recommendation').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
