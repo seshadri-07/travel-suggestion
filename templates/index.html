@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Student Travel Planner</title></head>
+<body style="font-family:sans-serif;text-align:center;padding:20px;">
+<h1>🎒 AI Student Travel Planner</h1>
+<p>Smart travel recommendations for students</p>
+<div><label>Budget (₹):</label><input id="budget" type="number" value="200"></div>
+<div><label>Days:</label><input id="days" type="number" value="2"></div>
+<button onclick="findDestination()">Find Destination</button>
+<div id="loading" style="display:none;">⏳ Loading...</div>
+<div id="result" style="display:none;margin-top:20px;"></div>
+<script>
+async function findDestination(){
+  const budget=document.getElementById('budget').value;
+  const days=document.getElementById('days').value;
+  document.getElementById('loading').style.display='block';
+  document.getElementById('result').style.display='none';
+  const res=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({budget,days})});
+  const data=await res.json();
+  document.getElementById('loading').style.display='none';
+  if(!data.ok){alert(data.message);return;}
+  const r=data.result;
+  document.getElementById('result').innerHTML=`<h3>${r.location_name}</h3><p>Cost ₹${r.pred_cost_total_per_person.toFixed(2)}</p><p>Rating: ${r.rating}</p><p>Popularity: ${r.popularity}</p><p>Score: ${r.score.toFixed(3)}</p>`;
+  document.getElementById('result').style.display='block';
+}
+</script></body></html>
