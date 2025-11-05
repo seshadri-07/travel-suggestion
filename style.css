@@ -1,0 +1,7 @@
+body { font-family: system-ui, sans-serif; background:#0b1220; color:white; }
+.wrap { max-width:600px; margin:40px auto; padding:20px; }
+.card { background:#121a2b; border-radius:12px; padding:16px; margin-bottom:20px; }
+input { width:100%; padding:8px; margin-bottom:10px; border-radius:8px; border:1px solid #334155; background:#0d1526; color:white; }
+button { background:#2563eb; color:white; border:none; border-radius:8px; padding:10px 16px; cursor:pointer; }
+button:hover { background:#3b82f6; }
+.hidden { display:none; }

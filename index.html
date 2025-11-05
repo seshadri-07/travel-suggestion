@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AI Student Travel Planner</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="wrap">
+  <header><h1>🎒 AI Student Travel Planner</h1></header>
+  <section class="card">
+    <label>Budget per person (₹)</label>
+    <input id="budget" type="number" value="200">
+    <label>Days</label>
+    <input id="days" type="number" value="2">
+    <button id="btn">Find Best Destination</button>
+    <p id="status"></p>
+  </section>
+  <section id="result" class="card hidden">
+    <h2>Best Recommendation</h2>
+    <p><b>Location:</b> <span id="r_loc"></span></p>
+    <p><b>Estimated Cost:</b> ₹<span id="r_cost"></span></p>
+    <p><b>Rating:</b> <span id="r_rate"></span></p>
+    <p><b>Popularity:</b> <span id="r_pop"></span></p>
+    <p><b>Score:</b> <span id="r_score"></span></p>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
